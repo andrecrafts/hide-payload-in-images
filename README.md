@@ -1,4 +1,4 @@
-# 👾 Hide Shellcode Payload in Images 👾
+# Hiding Shellcode in Image Files with Python and C/C++
 **-> A project that demonstrates embedding shellcode payloads into image files (like PNGs) using Python and extracting them using C/C++. Payloads can be retrieved directly from the file on disk or from the image stored in a binary's resources section (.rsrc)**
 
 ### 🔍 Learn more about this in my blog post:
