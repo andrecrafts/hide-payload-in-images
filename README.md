@@ -16,7 +16,7 @@
   - Extract payloads from modified image files stored on disk.
 - [payload-extractor-from-resource.cpp](https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-rsrc/payload-extractor-from-rsrc.cpp)
   - Extracts payloads from image files stored in the binary's resources section (.rsrc) using WinAPI functions like `FindResource` and `LockResource`. 
-- **(NEW)** [payload-extractor-from-resource-via-peb.cpp](https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-rsrc/payload-extractor-from-rsrc.cpp)
+- **(NEW)** [payload-extractor-from-resource-via-peb.cpp](https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-rsrc-via-peb/payload-extractor-from-rsrc-via-peb.cpp)
   - Extracts payloads from image files stored in the binary's resources section by manually parsing the Process Environment Block (PEB) and PE headers, **avoiding WinAPI functions for increased stealth**. 
 
 ### 🎥 Video Demo
