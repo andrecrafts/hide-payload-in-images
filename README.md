@@ -3,11 +3,6 @@
 
 #### Note: This repository just hit 101 stars ⭐! Thank you guys so much for your support!
 
-#### ❗ Updates ❗
-1. **Stealthier Payload Extraction:** Implemented manual PE header parsing to retrieve resources without WinAPI calls, avoiding detection vectors.
-2. **PEB Reliability Fix:** Replaced function `hGetCurrentModuleHandle`'s unsafe backward header parsing with direct PEB access via __readgsqword/__readfsdword, resolving compiler-optimization crashes and supporting x86/x64. 
-3. **PEB Structure Support:** Added `PEB_Structs.h` for portable PEB/PE definitions, eliminating dependencies on Windows headers.
-
 ### 🔍 Learn more about this in my blog post:
 - **[Blog post link](https://wafflesexploits.github.io/posts/Hide_a_Payload_in_Plain_Sight_Embedding_Shellcode_in_a_Image_file/#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file)**
 
@@ -20,6 +15,11 @@
   - Extracts payloads from image files stored in the binary's resources section (.rsrc) using WinAPI functions like `FindResource` and `LockResource`. 
 - **(NEW)** [payload-extractor-from-resource-via-peb.cpp](https://github.com/WafflesExploits/hide-payload-in-images/blob/main/code/payload-extractor/payload-extractor-from-rsrc-via-peb/payload-extractor-from-rsrc-via-peb.cpp)
   - Extracts payloads from image files stored in the binary's resources section by manually parsing the Process Environment Block (PEB) and PE headers, **avoiding WinAPI functions for increased stealth**. 
+
+#### ❗ Updates ❗
+1. **Stealthier Payload Extraction:** Implemented manual PE header parsing to retrieve resources without WinAPI calls, avoiding detection vectors.
+2. **PEB Reliability Fix:** Replaced function `hGetCurrentModuleHandle`'s unsafe backward header parsing with direct PEB access via __readgsqword/__readfsdword, resolving compiler-optimization crashes and supporting x86/x64. 
+3. **PEB Structure Support:** Added `PEB_Structs.h` for portable PEB/PE definitions, eliminating dependencies on Windows headers.
 
 ### 🎥 Video Demo
 👉 Watch the full video demo here:
