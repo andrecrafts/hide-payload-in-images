@@ -1,7 +1,7 @@
 # Hiding Shellcode in Image Files with Python and C/C++
 **-> A project that demonstrates embedding shellcode payloads into image files (like PNGs) using Python and extracting them using C/C++. Payloads can be retrieved directly from the file on disk or from the image stored in a binary's resources section (.rsrc)**
 
-#### Note: This repository just hit 101 stars ⭐! Thank you guys so much for your support!
+#### Note: This repository just hit 117 stars ⭐! Thank you guys so much for your support!
 
 ### 🔍 Learn more about this in my blog post:
 - **[Blog post link](https://wafflesexploits.github.io/posts/Hide_a_Payload_in_Plain_Sight_Embedding_Shellcode_in_a_Image_file/#store-the-image-file-in-the-resources-section-rsrc-of-a-binary-file)**
@@ -18,7 +18,7 @@
 
 #### ❗ Updates ❗
 1. **Stealthier Payload Extraction:** Implemented manual PE header parsing to retrieve resources without WinAPI calls, avoiding detection vectors.
-2. **PEB Reliability Fix:** Replaced function `hGetCurrentModuleHandle`'s unsafe backward header parsing with direct PEB access via __readgsqword/__readfsdword, resolving compiler-optimization crashes and supporting x86/x64. 
+2. **PEB Reliability Fix:** Replaced function `hGetCurrentModuleHandle`'s unsafe backward header parsing with direct PEB access via __readgsqword/__readfsdword, resolving compiler-optimization crashes and supporting x86/x64. This new function has two alternatives, based on whether the project is a DLL or a EXE.
 3. **PEB Structure Support:** Added `PEB_Structs.h` for portable PEB/PE definitions, eliminating dependencies on Windows headers.
 
 ### 🎥 Video Demo
